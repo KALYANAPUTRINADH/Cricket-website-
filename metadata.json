@@ -1,0 +1,6 @@
+{
+  "name": "Cosmic Mind",
+  "description": "An ambient box breathing and meditative AI sanctuary featuring symbol analysis, persistent journaling, and mood chart waves.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

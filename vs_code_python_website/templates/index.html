@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Mind Space</title>
+    <!-- Use elegant, fast system-ui font pairings -->
+    <style>
+        :root {
+            --bg-cosmic: #09080c;
+            --surface-cosmic: #14121e;
+            --surface-variant: #1e1b30;
+            --nebula-violet: #8c52ff;
+            --stardust-teal: #00e5ff;
+            --astral-gold: #ffb300;
+            --text-primary: #f1eef8;
+            --text-secondary: #ece6f4;
+            --text-muted: #8c899c;
+        }
+
+        body {
+            background-color: var(--bg-cosmic);
+            color: var(--text-primary);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem 1rem 1rem 1rem;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--stardust-teal);
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        main {
+            width: 100%;
+            max-width: 800px;
+            padding: 1rem;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            main {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--surface-cosmic);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            border-color: rgba(140, 82, 255, 0.3);
+        }
+
+        .card-title {
+            color: var(--stardust-teal);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            background-color: var(--surface-variant);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 0.75rem;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: outline-color 0.2s, border-color 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--nebula-violet);
+            box-shadow: 0 0 0 2px rgba(140, 82, 255, 0.25);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--nebula-violet), #6e2bf2);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            opacity: 0.92;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .entry-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .entry-item {
+            background-color: var(--surface-variant);
+            border-radius: 12px;
+            padding: 1.2rem;
+            position: relative;
+            border-left: 3.5px solid var(--stardust-teal);
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.4rem;
+        }
+
+        .entry-title {
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .entry-category {
+            font-size: 0.75rem;
+            background: rgba(140, 82, 255, 0.15);
+            color: var(--nebula-violet);
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        .entry-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.45;
+            margin: 0.5rem 0;
+            word-wrap: break-word;
+        }
+
+        .entry-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.75rem;
+        }
+
+        .delete-btn {
+            background: transparent;
+            color: #ff5252;
+            border: none;
+            width: auto;
+            padding: 0.2rem 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .delete-btn:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>COSMIC MIND SPACE</h1>
+        <div class="subtitle">A python site initialized for local workspace compilation</div>
+    </header>
+
+    <main>
+        <!-- Creative Entry Form -->
+        <section class="card">
+            <h2 class="card-title">Document a Cosmic Reflection</h2>
+            <form id="ideasForm">
+                <div class="form-group">
+                    <label for="titleInput">Title</label>
+                    <input type="text" id="titleInput" placeholder="e.g. Dream Symbology" required>
+                </div>
+                <div class="form-group">
+                    <label for="categoryInput">Sphere / Category</label>
+                    <select id="categoryInput">
+                        <option value="Philosophy">Philosophy</option>
+                        <option value="Science">Science</option>
+                        <option value="Design">Design</option>
+                        <option value="Dreams">Dreams</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reflectionInput">Your Mind Reflection</label>
+                    <textarea id="reflectionInput" rows="4" placeholder="Deep thought or cosmic idea details..." required></textarea>
+                </div>
+                <button type="submit">Deploy to Workspace</button>
+            </form>
+        </section>
+
+        <!-- Current Journal Grid -->
+        <section class="card">
+            <h2 class="card-title">Your Mind Stream</h2>
+            <div class="entry-list" id="entryList">
+                <!-- Entries loaded dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Server Timestamp: {{ time }} | Built with Flask & VS Code Integration
+    </footer>
+
+    <script>
+        // Form Submit listener
+        document.getElementById('ideasForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('titleInput').value;
+            const category = document.getElementById('categoryInput').value;
+            const reflection = document.getElementById('reflectionInput').value;
+
+            try {
+                const response = await fetch('/api/entries', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, category, reflection })
+                });
+
+                if (response.ok) {
+                    // Reset fields
+                    document.getElementById('titleInput').value = '';
+                    document.getElementById('reflectionInput').value = '';
+                    // Reload stream list
+                    loadEntries();
+                }
+            } catch (err) {
+                console.error("Cosmic transmission disrupted:", err);
+            }
+        });
+
+        // Load Entries dynamically
+        async function loadEntries() {
+            try {
+                const response = await fetch('/api/entries');
+                const entries = await response.json();
+                const container = document.getElementById('entryList');
+                container.innerHTML = '';
+
+                if (entries.length === 0) {
+                    container.innerHTML = `
+                        <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 2rem;">
+                            Your Mind Stream is completely silent. Start writing to fill the space.
+                        </p>
+                    `;
+                    return;
+                }
+
+                entries.forEach(entry => {
+                    const item = document.createElement('div');
+                    item.className = 'entry-item';
+                    item.innerHTML = `
+                        <div class="entry-header">
+                            <h3 class="entry-title">${escapeHtml(entry.title)}</h3>
+                            <span class="entry-category">${escapeHtml(entry.category)}</span>
+                        </div>
+                        <p class="entry-text">${escapeHtml(entry.reflection)}</p>
+                        <div class="entry-footer">
+                            <span>${entry.timestamp}</span>
+                            <button class="delete-btn" onclick="deleteEntry(${entry.id})">Dissolve</button>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            } catch (err) {
+                console.error("Error loading entries:", err);
+            }
+        }
+
+        // Dissolve / Delete idea
+        async function deleteEntry(id) {
+            try {
+                const response = await fetch(`/api/entries/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    loadEntries();
+                }
+            } catch (err) {
+                console.error("Failed to dissolve entry", err);
+            }
+        }
+
+        // HTML Sanitizer
+        const escapeHtml = (text) => {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // Initial Load
+        loadEntries();
+    </script>
+</body>
+</html>

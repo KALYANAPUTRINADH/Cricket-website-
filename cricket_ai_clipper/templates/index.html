@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Cricket Ball Auto-Clipper Dashboard</title>
+    <!-- Use elegant displaying font pairing -->
+    <style>
+        :root {
+            --bg-obsidian: #08070d;
+            --surface-card: #12101e;
+            --surface-muted: #1a162b;
+            --neon-aqua: #00f5ff;
+            --neon-violet: #8c52ff;
+            --accent-green: #00ff88;
+            --accent-orange: #ff5e3a;
+            --text-silver: #f3f0fa;
+            --text-secondary: #c9c3db;
+            --text-dark: #645f78;
+        }
+
+        body {
+            background-color: var(--bg-obsidian);
+            color: var(--text-silver);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--surface-card);
+            border-bottom: 1px solid rgba(0, 245, 255, 0.1);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: var(--neon-aqua);
+            box-shadow: 0 0 12px var(--neon-aqua);
+            animation: pulse-glow 2s infinite;
+        }
+
+        h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: 2px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .badge-ai {
+            font-size: 0.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-violet), #5b1bf2);
+            color: #fff;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            letter-spacing: 1px;
+        }
+
+        .api-config-status {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        main {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1.5rem;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            main {
+                grid-template-columns: 1.1fr 0.9fr;
+            }
+        }
+
+        .card {
+            background-color: var(--surface-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.75rem;
+        }
+
+        .card-heading h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--neon-aqua);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .video-box {
+            background-color: #030206;
+            aspect-ratio: 16/9;
+            border-radius: 12px;
+            border: 1.5px dashed rgba(255, 255, 255, 0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .video-box:hover {
+            border-color: var(--neon-aqua);
+        }
+
+        .drop-icon {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-info {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.25rem;
+        }
+
+        label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            background-color: var(--surface-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            padding: 0.65rem;
+            box-sizing: border-box;
+            font-size: 0.85rem;
+        }
+
+        .btn-run {
+            grid-column: span 2;
+            background: linear-gradient(135deg, var(--neon-aqua), #00addc);
+            color: var(--bg-obsidian);
+            font-weight: 800;
+            font-size: 0.95rem;
+            border: none;
+            padding: 0.85rem;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.1s, opacity 0.2s;
+            box-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
+            margin-top: 0.5rem;
+        }
+
+        .btn-run:hover {
+            opacity: 0.95;
+            box-shadow: 0 0 25px rgba(0, 245, 255, 0.5);
+        }
+
+        .btn-run:active {
+            transform: scale(0.98);
+        }
+
+        /* Console state logs list */
+        .logs-panel {
+            background-color: #040307;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1.25rem;
+            height: 120px;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.78rem;
+            color: #00ff66;
+            border: 1px solid rgba(0, 255, 102, 0.15);
+        }
+
+        .metric-visual {
+            margin-top: 1.25rem;
+        }
+
+        .canvas-container {
+            position: relative;
+            background-color: #040307;
+            border-radius: 12px;
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Delivery output segment list */
+        .segment-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            overflow-y: auto;
+            max-height: 520px;
+            padding-right: 0.25rem;
+        }
+
+        .segment-card {
+            background-color: var(--surface-muted);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1.5px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .segment-card:hover {
+            border-color: var(--neon-violet);
+            transform: translateY(-2px);
+        }
+
+        .segment-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .segment-over {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .segment-over::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--neon-violet);
+        }
+
+        .segment-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .tag-wicket {
+            background: rgba(255, 94, 58, 0.15);
+            color: var(--accent-orange);
+            border: 1px solid var(--accent-orange);
+        }
+
+        .tag-boundary {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .tag-dot {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-silver);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .segment-details {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .segment-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-dark);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .play-btn {
+            background-color: rgba(140, 82, 255, 0.15);
+            color: var(--neon-violet);
+            border: 1px solid var(--neon-violet);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .play-btn:hover {
+            background-color: var(--neon-violet);
+            color: #fff;
+        }
+
+        /* Real-time simulation modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(3, 2, 6, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background-color: var(--surface-card);
+            border: 1px solid var(--neon-violet);
+            border-radius: 20px;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 680px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.2rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-dark);
+        }
+
+        .close-modal:hover {
+            color: #fff;
+        }
+
+        .progress-bar-wrap {
+            width: 100%;
+            background-color: var(--surface-muted);
+            height: 6px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--neon-aqua), var(--neon-violet));
+            transition: width 0.3s ease;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 12px var(--neon-aqua); }
+            50% { box-shadow: 0 0 24px var(--neon-aqua), 0 0 8px rgba(0, 245, 255, 0.2); }
+            100% { box-shadow: 0 0 12px var(--neon-aqua); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-wrap">
+            <div class="logo-dot"></div>
+            <h1>🏏 Auto-Clipper AI</h1>
+            <span class="badge-ai">VBC2 Engine</span>
+        </div>
+        <div class="api-config-status">
+            <span>Gemini Intel:</span>
+            <span style="font-weight: 700; color: #00ff66;">ACTIVE & INSTALLED</span>
+        </div>
+    </header>
+
+    <main>
+        <!-- LHS Panel: Controller & Pipeline Configurations -->
+        <section class="card">
+            <div class="card-heading">
+                <h2>1. Stream & Match Video Feed</h2>
+            </div>
+            
+            <div class="video-box" id="dropArea">
+                <div class="drop-icon">📁</div>
+                <div class="file-info" id="fileInfo">
+                    <strong>Drag & Drop Cricket stream file</strong>
+                    <p style="margin: 0.3rem 0; font-size: 0.78rem; opacity: 0.6;">Or click to select video (Supporting .mp4, .mkv - Limit 120MB)</p>
+                </div>
+                <input type="file" id="videoFile" style="display: none;" accept="video/*">
+            </div>
+
+            <div class="control-panel">
+                <div>
+                    <label for="matchConditions">Match Conditions</label>
+                    <select id="matchConditions">
+                        <option value="test_t20_standard">Standard T20 International (White Ball)</option>
+                        <option value="ipl_broadcast">IPL Premier (Custom Scoreboard Layout)</option>
+                        <option value="test_day_night">Test Match Pink Ball (Night Floodlights)</option>
+                        <option value="live_stream_feed">Direct Live URL Stream RTMP / HLS</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="replayConfidence">Anti-Replay Sensitivity</label>
+                    <select id="replayConfidence">
+                        <option value="high">High Filtering (Strictly skips Replays & Cuts)</option>
+                        <option value="standard" selected>Standard Adaptive threshold</option>
+                        <option value="relaxed">Relaxed (Keep borderline frames)</option>
+                    </select>
+                </div>
+                <button class="btn-run" id="btnSplay">Segment Ball-by-Ball Timeline</button>
+            </div>
+
+            <!-- Analysis Console -->
+            <div class="logs-panel" id="consoleLogs">
+                [SYSTEM] Awaiting stream setup. Select or drop a cricket video container to initialize sensor arrays.
+            </div>
+
+            <!-- Custom motion curve charting -->
+            <div class="metric-visual">
+                <label style="margin-bottom: 0.5rem;">Optical-Flow Motion Amplitude (Bowler Strides)</label>
+                <div class="canvas-container">
+                    <canvas id="motionChart" height="90"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- RHS Panel: Auto-Segmented Deliveries -->
+        <section class="card">
+            <div class="card-heading">
+                <h2>2. AI Segmented deliveries</h2>
+                <div style="font-size: 0.8rem; color: var(--text-dark); font-weight: 700;" id="totalBallsText">0 BALLS CLIPPED</div>
+            </div>
+
+            <div class="segment-grid" id="segmentTimeline">
+                <div style="text-align: center; color: var(--text-dark); padding: 4rem 2rem;">
+                    <p style="font-size: 1.5rem; margin-bottom: 0.5rem;">⏱️</p>
+                    <strong>Awaiting live segments...</strong>
+                    <p style="font-size: 0.8rem; margin: 0.5rem 0 0 0;">Clipped over segments will dynamically align here in real-time order.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Simulation Progress modal -->
+    <div class="modal" id="simulationModal">
+        <div class="modal-content">
+            <div class="close-modal" id="closeModal">&times;</div>
+            <h3 style="margin-top: 0; color: var(--neon-aqua); text-transform: uppercase; letter-spacing: 1px;">Running Video Segmentation Pipeline</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);" id="modalStatus">Scanning track directories...</p>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" id="modalBarFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Custom variables
+        let uploadedFilepath = null;
+        const dropArea = document.getElementById('dropArea');
+        const fileInput = document.getElementById('videoFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const btnSplay = document.getElementById('btnSplay');
+        const consoleLogs = document.getElementById('consoleLogs');
+        const segmentTimeline = document.getElementById('segmentTimeline');
+        const totalBallsText = document.getElementById('totalBallsText');
+        
+        // Progress modal
+        const simulationModal = document.getElementById('simulationModal');
+        const modalStatus = document.getElementById('modalStatus');
+        const modalBarFill = document.getElementById('modalBarFill');
+        const closeModal = document.getElementById('closeModal');
+
+        // Draw Motion peaks canvas
+        const canvas = document.getElementById('motionChart');
+        const ctx = canvas.getContext('2d');
+        let chartWidth = canvas.clientWidth;
+        let chartHeight = canvas.clientHeight;
+
+        function resizeCanvas() {
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+            chartWidth = canvas.width;
+            chartHeight = canvas.height;
+            drawMotionChart([]);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Simple mock motion data showing peak of active delivery stride
+        function drawMotionChart(highlightIndexes = []) {
+            ctx.clearRect(0, 0, chartWidth, chartHeight);
+            
+            // Draw baseline border
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, chartHeight - 10);
+            ctx.lineTo(chartWidth, chartHeight - 10);
+            ctx.stroke();
+
+            // Render simulated continuous metric wave
+            ctx.strokeStyle = '#8c52ff';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            
+            const totalPoints = 60;
+            const points = [];
+            
+            for(let i = 0; i < totalPoints; i++) {
+                const x = (i / totalPoints) * chartWidth;
+                // Generate natural-looking motion peaks (e.g. 6 spikes representing bowler release delivery)
+                let base_y = 15;
+                if (i % 10 === 4) base_y = 65; // Massive stride amplitude
+                if (i % 10 === 5) base_y = 45; // Swing amplitude
+                
+                const noise = Math.sin(i / 1.5) * 8 + Math.random() * 4;
+                const final_y = (chartHeight - 10) - (base_y + noise);
+                points.push({x, y: final_y, isPeak: (i % 10 === 4)});
+                
+                if (i === 0) ctx.moveTo(x, final_y);
+                else ctx.lineTo(x, final_y);
+            }
+            ctx.stroke();
+
+            // Highlight bowler release thresholds (AI events)
+            points.forEach((p, idx) => {
+                if (p.isPeak && highlightIndexes.includes(Math.floor(idx/10))) {
+                    ctx.fillStyle = '#00f5ff';
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Active target neon dot indicators
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            });
+        }
+
+        // Initialize Canvas
+        resizeCanvas();
+
+        // Drag and drop listeners
+        dropArea.addEventListener('click', () => fileInput.click());
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = 'var(--neon-violet)';
+        });
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        });
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelection(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelection(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelection(file) {
+            fileInfo.innerHTML = `
+                <strong style="color: var(--neon-aqua);">${file.name}</strong>
+                <p style="margin: 0.3rem 0; font-size: 0.75rem;">Container parsed: ${(file.size / (1024*1024)).toFixed(2)} MB</p>
+            `;
+            consoleLogs.innerHTML += `\n[SYSTEM] Local stream file selected. Priming AI model. Click 'Segment' to launch.`;
+            consoleLogs.scrollTop = consoleLogs.scrollHeight;
+            
+            // Perform actual flask upload
+            const formData = new FormData();
+            formData.append('video', file);
+            
+            fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.filepath) {
+                    uploadedFilepath = data.filepath;
+                    consoleLogs.innerHTML += `\n[FILE_SYSTEM] Resource uploaded successfully: ${data.filename}`;
+                    consoleLogs.scrollTop = consoleLogs.scrollHeight;
+                }
+            })
+            .catch(err => {
+                console.error("Upload process error", err);
+            });
+        }
+
+        // Close modal
+        closeModal.addEventListener('click', () => {
+            simulationModal.style.display = 'none';
+        });
+
+        // Click Segment action
+        btnSplay.addEventListener('click', () => {
+            simulationModal.style.display = 'flex';
+            modalBarFill.style.width = '0%';
+            modalStatus.innerText = "Initializing Multi-Stage Computer Vision & AI modules...";
+            
+            // Poll Flask background analyzer State logs
+            const statusInterval = setInterval(() => {
+                fetch('/api/status')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status) {
+                        modalStatus.innerText = `[${data.status.step}] ${data.status.message}`;
+                        modalBarFill.style.width = `${data.status.progress}%`;
+                        
+                        // Populate backend console window logs
+                        if (data.logs && data.logs.length > 0) {
+                            consoleLogs.innerHTML = data.logs.join('\n');
+                            consoleLogs.scrollTop = consoleLogs.scrollHeight;
+                        }
+                    }
+                });
+            }, 600);
+
+            // Fetch actual REST call to run cv process
+            fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    filepath: uploadedFilepath
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                clearInterval(statusInterval);
+                simulationModal.style.display = 'none';
+                
+                if (data.segments) {
+                    renderSegmentedTimeline(data.segments);
+                } else if (data.error) {
+                    consoleLogs.innerHTML += `\n[PIPELINE_ERROR] Analysis failed: ${data.error}`;
+                    consoleLogs.scrollTop = consoleLogs.scrollHeight;
+                }
+            })
+            .catch(err => {
+                clearInterval(statusInterval);
+                simulationModal.style.display = 'none';
+                consoleLogs.innerHTML += `\n[NETWORK] Failed to contact analytics daemon: ${err}`;
+                consoleLogs.scrollTop = consoleLogs.scrollHeight;
+            });
+        });
+
+        function renderSegmentedTimeline(segments) {
+            segmentTimeline.innerHTML = '';
+            totalBallsText.innerText = `${segments.length} BALLS OVER-CLIPPED`;
+            
+            const activePeaks = [];
+
+            segments.forEach((seg, index) => {
+                activePeaks.push(index);
+                
+                let tagClass = 'tag-dot';
+                if (seg.event.includes('Wicket')) tagClass = 'tag-wicket';
+                else if (seg.event.includes('Four') || seg.event.includes('Six')) tagClass = 'tag-boundary';
+
+                const card = document.createElement('div');
+                card.className = 'segment-card';
+                card.innerHTML = `
+                    <div class="segment-head">
+                        <div class="segment-over">BALL SEQUENCE LABEL ${seg.label}</div>
+                        <span class="segment-tag ${tagClass}">${seg.event}</span>
+                    </div>
+                    <div class="segment-details">${seg.desc}</div>
+                    <div class="segment-meta">
+                        <span>TIMESTAMPS: ${seg.start}s - ${seg.end}s (${seg.duration}s clip)</span>
+                        <button class="play-btn" onclick="simPlayBall('${seg.label}', ${seg.start}, ${seg.end})">🔍 PREVIEW LOOP</button>
+                    </div>
+                `;
+                segmentTimeline.appendChild(card);
+            });
+
+            // Re-render chart showing highlighted bowler release peaks
+            drawMotionChart(activePeaks);
+        }
+
+        // Sim play ball handler
+        function simPlayBall(ballLabel, start, end) {
+            consoleLogs.innerHTML += `\n[MEDIA_DAEMON] Splicing ball ${ballLabel}. Playback looping sequence from ${start}s to ${end}s...`;
+            consoleLogs.scrollTop = consoleLogs.scrollHeight;
+            alert(`⚡ [Media Engine Splicer]\nPreviewing extracted ball ${ballLabel} segment clip!\nBounds: ${start} to ${end} seconds.\nSuccessfully saved as: /static/clips/over_${ballLabel.replace('.', '_')}.mp4`);
+        }
+    </script>
+</body>
+</html>
